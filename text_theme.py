@@ -2,9 +2,10 @@ from tkinter import font
 f_size = 15
 f_weight = "normal"
 f_familly = "Arial"
-def theme(index,root,text,b_ground,f_ground):
-    root.config(bg=b_ground)
-    text.config(background=b_ground,foreground=f_ground)
+colors = [["black","white"],["blue","white"],["white","black"],["#FADCD9","black"],["#d4cebd","black"]]
+def theme(index,root,text):
+    # root.config(bg=colors[index][0])
+    text.config(background=colors[index][0],foreground=colors[index][1])
     
     
 def font_family(family, text):

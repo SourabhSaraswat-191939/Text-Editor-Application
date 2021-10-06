@@ -9,6 +9,7 @@ from googleapiclient.http import MediaFileUpload,MediaIoBaseDownload
 import webbrowser
 import io
 
+# If modifying these scopes, delete the file token.json.
 # SCOPES = ['https://www.googleapis.com/auth/drive']
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
           'https://www.googleapis.com/auth/drive.file']
@@ -31,7 +32,7 @@ def get_Gdrive_service():
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('token.json', 'w') as token:     # There is no need to call token.close() when using with statement. The with statement itself ensures proper acquisition and release of resources.
             token.write(creds.to_json())
 
     return build('drive', 'v3', credentials=creds)
@@ -49,7 +50,6 @@ def search(service,query):
     return result
     
 def searchFromList(files_list,searchValue,searchFor):
-    
     for i in range(len(files_list)):
         if files_list[i][searchFor] == searchValue:
             result = files_list[i][1]
@@ -83,6 +83,7 @@ def download_files(service,file_id,folder_id):
     query = "parents in '"+folder_id+"' and trashed = false"
     files_list = search(service,query)
     file_name=searchFromList(files_list,file_id,0)  #passing 0 to search for id 
+    print(file_name)
     try:
         fh = io.FileIO(os.path.join("./Google_Drive_Files",file_name), "wb")
     except:
@@ -95,21 +96,21 @@ def download_files(service,file_id,folder_id):
         status, done = downloader.next_chunk()
     return file_name
         # print("Download %d%%." % int(status.progress() * 100))
-# If modifying these scopes, delete the file token.json.
 
-def main():
-    service = get_Gdrive_service()
-    query = "mimeType='application/vnd.google-apps.folder' and name='"+Folder_Name+"' and trashed = false"
-    response = search(service,query) 
-    if response:
-        folder_id = response[0][0]
-    if len(response)==0:
-        folder_id = createFolder(service)
-    name='sourabh.txt'
-    upload_files(service,name,folder_id)
+# For testing to run this file directly.
+# def main():
+#     service = get_Gdrive_service()
+#     query = "mimeType='application/vnd.google-apps.folder' and name='"+Folder_Name+"' and trashed = false"
+#     response = search(service,query) 
+#     if response:
+#         folder_id = response[0][0]
+#     if len(response)==0:
+#         folder_id = createFolder(service)
+#     name='sourabh.txt'
+#     upload_files(service,name,folder_id)
 
-    # open_files(service,folder_id)
-    print("Running")
+#     # open_files(service,folder_id)
+#     print("Running")
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

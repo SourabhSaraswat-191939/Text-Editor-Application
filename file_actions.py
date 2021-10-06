@@ -4,20 +4,22 @@ from tkinter import filedialog, simpledialog, messagebox
 import tkinter
 from Gdrive import *
 
+fileName = "None"
 Folder_Name = 'Text-Editor (By-Sourabh)'
 def new_file(text):
     text.delete(0.0,END)
 
 def open_file(text):
     file1 = filedialog.askopenfile(mode='r')
+    global fileName
+    fileName = file1.name.rsplit('/',1)[1]     # to split on last occurence of '/, I used rsplit(). And 1 that we want to split only 1 occurence from last.
     data = file1.read()
     text.delete(0.0,END)
     text.insert(0.0,data)
 
 def save_file(text):
-    filename = "Untitled.txt"
     data = text.get(0.0,END)
-    file1 = open(filename, mode='w')
+    file1 = open(fileName, mode='w')
     file1.write(data)
 
 def save_as(text):
@@ -40,8 +42,9 @@ def open_from_drive(text):
     
     webbrowser.open("https://drive.google.com/drive/folders/"+folder_id)
     file_id = simpledialog.askstring("Open Google Drive File","Enter Your File ID of Google Drive")
-    file_name = download_files(service,file_id,folder_id)
-    file1 = open('./Google_Drive_Files/'+file_name,mode='r')
+    global fileName
+    fileName = download_files(service,file_id,folder_id)
+    file1 = open('./Google_Drive_Files/'+fileName,mode='r')
     data = file1.read()
     text.delete(0.0,END)
     text.insert(0.0,data)
@@ -63,6 +66,7 @@ def save_to_drive(text):
     # get input user for file to check it on drive
     # filename = filedialog.asksaveasfilename(confirmoverwrite=False)
     filename = simpledialog.askstring("Save File on Google Drive","Enter Your File Name To Save.")
+    print(filename)
     data = text.get(0.0,END)
     file = open('./Google_Drive_Files/'+filename,mode='w')
     file.write(data)
